@@ -1,17 +1,22 @@
+import crypto from 'node:crypto';
+
+import bcrypt from 'bcrypt';
 import DBLocal from 'db-local';
-import crypto from 'crypto';
+
+import { saltRounds } from './config.js';
+
 
 const { Schema } = new DBLocal({ path: './db'});
 
 // Creacion del schema de usuarios
-const User = Schema('User', {
+const User = Schema('Users', {
     _id: { type: String, require: true },
     username: { type: String, require: true },
     password: { type: String, require: true }
 })
 
 export class UserRepository {
-    static create ({username, password}) {
+    static async create ({username, password}) {
         // Validar nombres de usuarios (Probar la biblioteca zod despues)
         if (typeof username !== 'string') throw new Error('El usuario tiene que ser una cadena de texto.');
         if (username.length < 3) throw new Error('El usuario tiene que ser mayor a 3 caracteres.');
@@ -27,10 +32,13 @@ export class UserRepository {
         // Generacion del ID con randomUUID
         const id = crypto.randomUUID();
 
+        //Encriptar contraseña
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         User.create({
             _id: id,
             username,
-            password
+            password: hashedPassword
         }).save();
 
         return id;

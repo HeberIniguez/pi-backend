@@ -14,13 +14,13 @@ app.get('/', (req, res) => {
 //EndPoints
 app.post('/login', (req, res) => {});
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     const {username, password } = req.body;
     console.log({ username, password });
 
     try { 
-        const id = UserRepository.create({ username, password });
-        res.send({ id });
+        const id = await UserRepository.create({ username, password });
+        res.send({ id, username });
     } catch (error) {
         res.status(400).send(error.message);
     }
