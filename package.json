@@ -1,0 +1,25 @@
+{
+  "name": "pi-backend",
+  "version": "1.0.0",
+  "description": "Desarrollo BackEnd del Proyecto Integrador.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HeberIniguez/pi-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HeberIniguez/pi-backend/issues"
+  },
+  "homepage": "https://github.com/HeberIniguez/pi-backend#readme",
+  "dependencies": {
+    "express": "4.21.2"
+  }
+}
