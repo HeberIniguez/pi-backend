@@ -15,15 +15,25 @@ const User = Schema('Users', {
     password: { type: String, require: true }
 })
 
+// Validaciones (Probar la biblioteca zod despues)
+class Validation {
+    static username (username) {
+    // Validar nombres de usuarios 
+    if (typeof username !== 'string') throw new Error('El usuario tiene que ser una cadena de texto.');
+    if (username.length < 3) throw new Error('El usuario tiene que ser mayor a 3 caracteres.');
+    }
+
+    static password (password) {
+    // Validar la contraseña
+    if(typeof password !== 'string') throw new Error('La contraseña tiene que ser una cadena de texto.');
+    if(password.length < 8) throw new Error('La contraseña tiene que tener mayor a 8 caracteres.');
+    }
+}
+
 export class UserRepository {
     static async create ({username, password}) {
-        // Validar nombres de usuarios (Probar la biblioteca zod despues)
-        if (typeof username !== 'string') throw new Error('El usuario tiene que ser una cadena de texto.');
-        if (username.length < 3) throw new Error('El usuario tiene que ser mayor a 3 caracteres.');
-
-        // Validar la contraseña
-        if(typeof password !== 'string') throw new Error('La contraseña tiene que ser una cadena de texto.');
-        if(password.length < 8) throw new Error('La contraseña tiene que tener mayor a 8 caracteres.');
+        Validation.username(username);
+        Validation.password(password);
 
         // Validar que no se repitan los usuarios
         const user = User.findOne({ username });
@@ -44,5 +54,18 @@ export class UserRepository {
         return id;
     }
 
-    static login ({username, password}) {}
+    static async login ({username, password}) {
+        Validation.username(username);
+        Validation.password(password);
+
+        const user = User.findOne({ username });
+        if ( !user ) throw new Error('El usuario no existe.');
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) throw new Error('La contraseña es incorrecta.');
+
+        const { password: _, ... publicUser } = user;
+
+        return publicUser;
+    }
 }
